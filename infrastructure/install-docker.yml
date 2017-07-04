@@ -1,0 +1,62 @@
+#############################################################################
+# The MIT License (MIT)                                                     #
+#                                                                           #
+# Copyright 2017 papa.                                                      #
+#                                                                           #
+# Permission is hereby granted, free of charge, to any person obtaining     #
+# a copy of this software and associated documentation files  to deal       #
+# (the “Software”), in the Software without restriction, including          #
+# without limitation the rights to use, copy, modify, merge, publish,       #
+# distribute, sublicense, and/or sell copies of the Software, and to permit #
+# persons to whom the Software is furnished to do so, subject to the        #
+# following conditions:                                                     #
+#                                                                           #
+# The above copyright notice and this permission notice shall be included   #
+# in all copies or substantial portions of the Software.                    #
+#                                                                           #
+# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS   #
+# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF                #
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.    #
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR          #
+# ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,  #
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE         #
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    #
+#############################################################################
+
+# this playbook installs docker, and then verifies docker service health.
+---
+
+- name: Install docker
+  sudo: True
+  hosts: remote
+  vars:
+    os_release: "{{ ansible_distribution_release }}"
+
+  tasks:
+
+    - name: Add docker GPG key to system
+      apt_key: url=https://download.docker.com/linux/ubuntu/gpg state=present 
+
+    - name: Add docker repo 
+      apt_repository: repo="deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ os_release }} stable"
+
+    - name: Update repo policy
+      shell: apt-cache policy docker-ce
+
+    - name: Update repo cache and install docker
+      apt: name=docker-ce update_cache=yes
+
+    - name : Verify docker service status
+      shell: systemctl status docker | grep -c 'running'
+      register: docker_active
+
+    - name: Fail if docker is not running
+      fail: msg='Docker failed to start' 
+      when: docker_active.stdout != "1"
+
+    - name: Add current user to docker group
+      user: name={{ ansible_user }} groups=docker append=yes
+      register: user_group
+
+    - debug: var=user_group
+

@@ -1,0 +1,79 @@
+#############################################################################
+# The MIT License (MIT)                                                     #
+#                                                                           #
+# Copyright 2017 papa.                                                      #
+#                                                                           #
+# Permission is hereby granted, free of charge, to any person obtaining     #
+# a copy of this software and associated documentation files  to deal       #
+# (the “Software”), in the Software without restriction, including          #
+# without limitation the rights to use, copy, modify, merge, publish,       #
+# distribute, sublicense, and/or sell copies of the Software, and to permit #
+# persons to whom the Software is furnished to do so, subject to the        #
+# following conditions:                                                     #
+#                                                                           #
+# The above copyright notice and this permission notice shall be included   #
+# in all copies or substantial portions of the Software.                    #
+#                                                                           #
+# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS   #
+# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF                #
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.    #
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR          #
+# ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,  #
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE         #
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    #
+#############################################################################
+
+# this playbook installs build tools on dev boxes.
+---
+
+- name: Install docker
+  sudo: True
+  hosts: remote
+  vars:
+    os_release: "{{ ansible_distribution_release }}"
+    golang_pkg: go1.8.3.linux-amd64
+
+  tasks:
+    - name: Update repo cache and installed packages
+      apt: update_cache=yes
+
+    - name: Install build essentials
+      apt: name={{ item }} state=present
+      with_items: 
+        - 'build-essential'
+        - 'checkinstall'
+        - 'libreadline-gplv2-dev'
+        - 'libncursesw5-dev'
+        - 'libssl-dev' 
+        - 'libsqlite3-dev' 
+        - 'tk-dev' 
+        - 'libgdbm-dev' 
+        - 'libc6-dev' 
+        - 'libbz2-dev'
+
+    - name: Add Java repo
+      apt_repository: repo="ppa:webupd8team/java" codename="{{ os_release }}"
+
+    - name: Update repo cache and installed packages, again
+      apt: update_cache=yes
+
+    - name: Update debconf
+      shell: echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
+      shell: echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
+
+    - name: Install Java
+      apt: name=oracle-java8-installer install_recommends=no state=latest
+
+    - name: Update Java configuration
+      shell: update-alternatives --config java
+
+    - name: Install golang
+      shell: "curl -kLO https://storage.googleapis.com/golang/{{ golang_pkg }}.tar.gz \
+            && tar -xf {{ golang_pkg }}.tar.gz && rm -rf /usr/local/go && cp -rf go /usr/local && rm {{ golang_pkg }}.tar.gz"
+
+    - name: Update PATH variable
+      shell: echo 'export PATH=$PATH:/usr/local/go/bin' >> /home/{{ ansible_user }}/.bash_profile
+      shell: echo 'export PATH=$PATH:/usr/local/go/bin' >> /home/{{ ansible_user }}/.bashrc
+
+
+    

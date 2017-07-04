@@ -1,0 +1,8 @@
+[all]
+dev1  ansible_connection=ssh    ansible_host=192.168.0.4
+dev2  ansible_connection=ssh    ansible_host=192.168.0.9
+dev3  ansible_connection=ssh    ansible_host=192.168.0.6
+
+[remote]
+dev1
+dev2
