@@ -29,7 +29,23 @@
 - name: Install etcd
   sudo: True
   hosts: remote
+  vars: 
+    dev_dir: /home/{{ ansible_user }}/spaces/devspace/
 
   tasks :
+    - stat: path={{ dev_dir}}
+      register: dev_dir_exists
+
+    - name: Create a dev repo directory
+      file: path={{ dev_dir }} state=directory mode=0755 owner={{ ansible_user }}
+      when: dev_dir_exists.stat.isdir is not defined or dev_dir_exists.stat.isdir == False
+
+    - stat: path={{ dev_dir}}/etcd
+      register: etcd_dir_exists
+
+    - name: Download kubernetes
+      git: repo='https://github.com/kubernetes/kubernetes' dest="{{ dev_dir }}" clone=yes update=yes
+      when: etcd_dir_exists.stat.isdir is not defined or etcd_dir_exists.stat.isdir == False
+
     - name: Install etcd
-      apt: name=etcd update_cache=yes
+      shell: cd "{{ dev_dir }}/etcd" && chmod +x build && ./build
