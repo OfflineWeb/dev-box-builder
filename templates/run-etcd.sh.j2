@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #############################################################################
 # The MIT License (MIT)                                                     #
 #                                                                           #
@@ -23,37 +25,4 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    #
 #############################################################################
 
-# this playbook installs and configures kubernetes.
----
-
-- name: Install and configure kubernetes
-  sudo: True
-  hosts: remote
-  vars:
-    dev_dir: /home/{{ ansible_user }}/spaces/devspace/
-
-  tasks :
-    - stat: path={{ dev_dir}}
-      register: dev_dir_exists
-
-    - name: Create a dev repo directory
-      file: path={{ dev_dir }} state=directory mode=0755 owner={{ ansible_user }}
-      when: dev_dir_exists.stat.isdir is not defined or dev_dir_exists.stat.isdir == False
-
-    - stat: path={{ dev_dir}}/kubernetes
-      register: kub_dir_exists
-
-    - name: Download kubernetes
-      git: repo='https://github.com/kubernetes/kubernetes' dest="{{ dev_dir }}" clone=yes update=yes
-      when: kub_dir_exists.stat.isdir is not defined or kub_dir_exists.stat.isdir == False
-
-    - name: Install kubernetes
-      shell: cd "{{ dev_dir }}/kubernetes" && make release
-
-    - name: Install kubectl 
-      shell:  "curl -LO https://storage.googleapis.com/kubernetes-release/release/\
-              $(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-
-    - name: Make executable and move to path
-      shell: chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
-
+./run-etcd-node.sh {{ dev_dir}}/{{ etcd3_dir }}/etcd {{ etcd_cluster_name }} etcd_cluster_ips

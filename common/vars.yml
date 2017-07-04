@@ -23,28 +23,12 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    #
 #############################################################################
 
-# this playbook tests liveness and connectivity of all hosts
----
+# all the necessary variables.
 
-- name: Ping it!
-  sudo: True
-  hosts: remote
-  vars:
-    HOST_COUNT: "{{ groups['remote'] | length }}"
-    #HOST_VARS: |
-    #  {% for item in groups['remote'] -%}
-    #      {{ hostvars[item].ansible_default_ipv4.address }}
-    #  {%- endfor %}
-    HOST_VARS: "{{ groups['remote']|map('extract', hostvars, 'ansible_host') | join(' ') }}"
-
-  tasks :
-    - name: Ping it alright!
-      shell: ping -c 3 localhost
-      register: pinged
-
-    #- debug: var={{ hostvars[ansible_hostname] }}
-    - debug: var=HOST_VARS
-
-
-
+- dev_dir: /home/{{ ansible_user }}/spaces/devspace/
+- etcd_ver: v3.2.1
+- etcd_url: 'https://github.com/coreos/etcd/releases/download'
+- etcd3_dir: etcd3
+- etcd_cluster_name: offline_base
+- kubernetes_url: 'https://github.com/kubernetes/kubernetes'
 

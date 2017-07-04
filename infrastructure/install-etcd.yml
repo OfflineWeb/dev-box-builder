@@ -29,9 +29,10 @@
 - name: Install etcd
   sudo: True
   hosts: remote
+  vars_files:
+    - ../common/vars.yml
   vars: 
-    dev_dir: /home/{{ ansible_user }}/spaces/devspace/
-
+    
   tasks :
     - stat: path={{ dev_dir}}
       register: dev_dir_exists
@@ -40,12 +41,16 @@
       file: path={{ dev_dir }} state=directory mode=0755 owner={{ ansible_user }}
       when: dev_dir_exists.stat.isdir is not defined or dev_dir_exists.stat.isdir == False
 
-    - stat: path={{ dev_dir}}/etcd
+    - stat: path={{ dev_dir}}/{{ etcd3_dir }}
       register: etcd_dir_exists
 
-    - name: Download kubernetes
-      git: repo='https://github.com/kubernetes/kubernetes' dest="{{ dev_dir }}" clone=yes update=yes
+    - name: Create a etcd dir
+      file: path={{ dev_dir }}/{{ etcd3_dir }} state=directory mode=0755 owner={{ ansible_user }}
+      when: etcd_dir_exists.stat.isdir is not defined or etcd_dir_exists.stat.isdir == False
+
+    - name: Download etcd
+      shell: curl -kL {{ etcd_url }}/{{ etcd_ver }}/etcd-{{ etcd_ver }}-linux-amd64.tar.gz -o {{ dev_dir}}/{{ etcd3_dir }}/etcd-{{ etcd_ver }}-linux-amd64.tar.gz
       when: etcd_dir_exists.stat.isdir is not defined or etcd_dir_exists.stat.isdir == False
 
     - name: Install etcd
-      shell: cd "{{ dev_dir }}/etcd" && chmod +x build && ./build
+      shell: tar xzvf {{ dev_dir}}/{{ etcd3_dir }}/etcd-{{ etcd_ver }}-linux-amd64.tar.gz -C {{ dev_dir}}/{{ etcd3_dir }} --strip-components=1
