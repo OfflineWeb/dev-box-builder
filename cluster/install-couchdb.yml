@@ -61,5 +61,5 @@
     - name: Configure and build couchdb
       git: cd "{{ dev_dir }}/couchdb" && ./configure && make release
 
-    - name: Move couchdb 
-      copy: src="{{ dev_dir }}/couchdb/rel" dest="{{ user_local_lib }}" directory_mode=yes
+    - name: Run couchdb 
+      copy: src="{{ dev_dir }}/couchdb/rel/couchdb" dest="{{ user_local_lib }}" directory_mode=yes
