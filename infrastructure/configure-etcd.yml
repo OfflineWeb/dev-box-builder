@@ -37,10 +37,10 @@
   tasks:
 
     - name: Copy etcd scripts
-      template: src=../templates/run-etcd.sh.j2 dest=/usr/local/bin/run-etcd.sh owner={{ ansible_user }}  group={{ ansible_user }} mode=0755
+      template: src=../templates/run-etcd.sh.j2 dest={{ usr_local_bin }}/run-etcd.sh owner={{ ansible_user }}  group={{ ansible_user }} mode=0755
     
     - name: Copy etcd scripts  
-      copy: src=../files/run-etcd-node.sh dest=/usr/local/bin/run-etcd-node.sh owner={{ ansible_user }}  group={{ ansible_user }} mode=0755
+      copy: src=../files/run-etcd-node.sh dest={{ usr_local_bin }}/run-etcd-node.sh owner={{ ansible_user }}  group={{ ansible_user }} mode=0755
 
     - name: Run etcd cluster node
       shell: nohup bash -c "/usr/local/bin/run-etcd.sh &"

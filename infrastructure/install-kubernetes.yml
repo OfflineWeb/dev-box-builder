@@ -57,5 +57,5 @@
               $(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
 
     - name: Make executable and move to path
-      shell: chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+      shell: chmod +x ./kubectl && mv ./kubectl "{{ usr_local_bin }}"/kubectl
 

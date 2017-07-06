@@ -25,10 +25,20 @@
 
 # all the necessary variables.
 
+# directories
 - dev_dir: /home/{{ ansible_user }}/spaces/devspace/
+- usr_local_bin: '/usr/local/bin'
+- user_local_lib: '/usr/local/lib'
+
+# etcd related
 - etcd_ver: v3.2.1
-- etcd_url: 'https://github.com/coreos/etcd/releases/download'
 - etcd3_dir: etcd3
 - etcd_cluster_name: offline_base
+- etcd_url: 'https://github.com/coreos/etcd/releases/download'
+
+# kubernetes related
 - kubernetes_url: 'https://github.com/kubernetes/kubernetes'
+
+# couchdb related
+- couchdb_url: 'https://github.com/apache/couchdb.git'
 

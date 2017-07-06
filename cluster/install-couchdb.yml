@@ -23,10 +23,43 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    #
 #############################################################################
 
-# this playbook runs all playbooks those install, configure and verify dev boxes.
+# this playbook installs couchdb.
 ---
 
-- include: install-docker.yml
-- include: install-etcd.yml
-- include: configure-etcd.yml
-- include: install-kubernetes.yml
+- name: Install couchdb
+  sudo: True
+  hosts: db
+  vars_files:
+    - ../common/vars.yml
+  vars: 
+    
+  tasks:
+
+    - name: Install nvm
+      shell: curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+
+    - name: Install nodejs
+      shell: nvm install 6.11.0
+
+    - name: Install Sphinx
+      shell: pip install Sphinx
+
+    - stat: path={{ dev_dir }}
+      register: dev_dir_exists
+
+    - name: Create a dev repo directory
+      file: path={{ dev_dir }} state=directory mode=0755 owner={{ ansible_user }}
+      when: dev_dir_exists.stat.isdir is not defined or dev_dir_exists.stat.isdir == False
+
+    - stat: path={{ dev_dir}}/couchdb
+      register: kub_dir_exists
+
+    - name: Download couchdb
+      git: repo="{{ couchdb_url }}" dest="{{ dev_dir }}" clone=yes update=yes
+      when: kub_dir_exists.stat.isdir is not defined or kub_dir_exists.stat.isdir == False
+
+    - name: Configure and build couchdb
+      git: cd "{{ dev_dir }}/couchdb" && ./configure && make release
+
+    - name: Move couchdb 
+      copy: src="{{ dev_dir }}/couchdb/rel" dest="{{ user_local_lib }}" directory_mode=yes
