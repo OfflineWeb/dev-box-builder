@@ -6,3 +6,6 @@ dev3  ansible_connection=ssh    ansible_host=192.168.0.6
 [remote]
 dev1
 dev2
+
+[kube-master]
+dev1

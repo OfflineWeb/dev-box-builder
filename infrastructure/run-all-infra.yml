@@ -30,3 +30,4 @@
 - include: install-etcd.yml
 - include: configure-etcd.yml
 - include: install-kubernetes.yml
+- include: configure-kubernetes.yml

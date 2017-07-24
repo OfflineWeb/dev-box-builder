@@ -23,31 +23,48 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    #
 #############################################################################
 
-# all the necessary variables.
+# this playbook configures kubernetes.
+---
+- name: Configure kubernetes master
+  sudo: True
+  hosts: kube-master
+  vars_files:
+    - ../common/vars.yml
+  vars:
 
-# os
-- os_release: "{{ ansible_distribution_release }}"
+  tasks :
 
-# directories
-- dev_dir: /home/{{ ansible_user }}/spaces/devspace/
-- usr_local: '/usr/local'
-- usr_local_bin: '/usr/local/bin'
-- user_local_lib: '/usr/local/lib'
-- go_path: '/usr/local/go/'
+    - name: Initialize kubeadm
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --token="{{ kube_token }}" --token-ttl=0
+      register: kube_master_init
 
-# etcd related
-- etcd_ver: v3.2.1
-- etcd3_dir: etcd3
-- etcd_cluster_name: offline_base
-- etcd_url: 'https://github.com/coreos/etcd/releases/download'
+    - name: Allow scheduling pods on master
+      shell: kubectl taint nodes --all node-role.kubernetes.io/master- 
 
-# kubernetes related
-- kubernetes_url: 'https://github.com/kubernetes/kubernetes'
-- kube_token: offline.kubecluster
-
-# couchdb related
-- couchdb_url: 'https://github.com/apache/couchdb.git'
+    - name: Verify master is running 
+      shell: kubectl get pods --all-namespaces
 
 
+- name: Configure kubernetes nodess
+  sudo: True
+  hosts: remote
+  vars_files:
+    - ../common/vars.yml
+  vars:
+    - kube_master_ip: hostvars[groups['kube-master'][0]]['ansible_host']
+    - kube_master_port: 6443
 
+  tasks:
+    - name: Add node to kubernetes
+      shell: kubeadm join --token {{ kube_token }} kube_master_ip:{{ kube_master_port }}
 
+- name: Verify nodes are added
+  sudo: True
+  hosts: kube-master
+  vars_files:
+    - ../common/vars.yml
+  vars:
+
+  tasks :
+    - name: Verify nodes
+      shell: kubectl get nodes

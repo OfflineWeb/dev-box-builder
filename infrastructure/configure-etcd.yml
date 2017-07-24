@@ -23,10 +23,10 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    #
 #############################################################################
 
-# this playbook installs etcd.
+# this playbook configures and starts etcd.
 ---
 
-- name: Install etcd
+- name: Configures and starts etcd
   sudo: True
   hosts: remote
   vars_files:
@@ -36,6 +36,10 @@
 
   tasks:
 
+    - name: Kill etcd if running
+      shell: systemctl stop etcd || kill -9 $(pgrep etcd)
+      ignore_errors: yes
+
     - name: Copy etcd scripts
       template: src=../templates/run-etcd.sh.j2 dest={{ usr_local_bin }}/run-etcd.sh owner={{ ansible_user }}  group={{ ansible_user }} mode=0755
     
@@ -43,5 +47,5 @@
       copy: src=../files/run-etcd-node.sh dest={{ usr_local_bin }}/run-etcd-node.sh owner={{ ansible_user }}  group={{ ansible_user }} mode=0755
 
     - name: Run etcd cluster node
-      shell: nohup bash -c "/usr/local/bin/run-etcd.sh &"
+      shell: nohup bash -c "{{ usr_local_bin }}/run-etcd.sh"
 

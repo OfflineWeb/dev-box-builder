@@ -84,3 +84,4 @@ fabric.properties
 /dev-box-builder.iml
 /ping.retry
 */*.retry
+*.log

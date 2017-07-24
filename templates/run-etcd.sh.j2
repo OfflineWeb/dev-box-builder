@@ -25,4 +25,5 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                    #
 #############################################################################
 
-./run-etcd-node.sh {{ dev_dir}}/{{ etcd3_dir }}/etcd {{ etcd_cluster_name }} etcd_cluster_ips
+{{ usr_local_bin }}/run-etcd-node.sh {{ dev_dir}}/{{ etcd3_dir }} \
+	{{ etcd_cluster_name }} {{ ansible_host }} {{ etcd_cluster_ips }} > {{ dev_dir}}/etcd-run.log 2>&1
