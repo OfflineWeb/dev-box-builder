@@ -34,25 +34,23 @@
   vars:
 
   tasks :
-    - stat: path={{ dev_dir}}
-      register: dev_dir_exists
+    - name: Install necessary dependencies
+      apt: name={{ item }} update_cache=yes
+      with_items:
+      - "apt-transport-https" 
+      - "ca-certificates" 
+      - "curl" 
+      - "software-properties-common"
 
-    - name: Create a dev repo directory
-      file: path={{ dev_dir }} state=directory mode=0755 owner={{ ansible_user }}
-      when: dev_dir_exists.stat.isdir is not defined or dev_dir_exists.stat.isdir == False
+    - name: Add kubeadm repo 
+      apt_repository: repo="deb http://apt.kubernetes.io/ kubernetes-xenial {{ os_release }} stable"
 
-    - stat: path={{ dev_dir}}/kubernetes
-      register: kub_dir_exists
-
-    - name: Download kubernetes
-      shell: "GOPATH={{ go_path }}/src {{ go_path }}/bin/go get -d k8s.io/kubernetes"
-      #git: repo='https://github.com/kubernetes/kubernetes' dest="{{ dev_dir }}" clone=no update=yes
-      #when: kub_dir_exists.stat.isdir is not defined or kub_dir_exists.stat.isdir == False
-
-    - name: Install kubernetes
-      shell: cd {{ go_path }}/src/k8s.io/kubernetes && make > {{ dev_dir }}/kubernetes-install.log 2>&1
-      #shell: cd "{{ dev_dir }}/kubernetes" && rm -rf .make/ \
-      #        && make clean && make quick-release > {{ dev_dir }}/kubernetes-install.log
+    - name: Install kubelet and kubeadm
+      apt: name={{ item }} update_cache=yes
+      with_items: 
+      - "kubelet"
+      - "kubeadm"
+      - "kubernetes-cni"
 
     - name: Install kubectl 
       shell:  "curl -LO https://storage.googleapis.com/kubernetes-release/release/\
@@ -64,25 +62,6 @@
     - name: Add kubeadm GPG key to system
       apt_key: url=https://packages.cloud.google.com/apt/doc/apt-key.gpg state=present 
 
-    - name: Add kubeadm repo 
-      apt_repository: repo="deb http://apt.kubernetes.io/ kubernetes-xenial {{ os_release }} stable"
-
-    - name: Install kubelet and kubeadm
-      apt: name={{ item }} update_cache=yes
-      with_items: 
-      - "kubelet"
-      - "kubeadm"
-
-    - stat: path={{ go_path}}/src/flannel
-      register: fln_dir_exists
-
-    - name: Download flannel
-      git: repo='https://github.com/coreos/flannel.git' dest="{{ go_path }}/src" clone=yes update=yes
-      when: fln_dir_exists.stat.isdir is not defined or fln_dir_exists.stat.isdir == False
-
-    - name: Install flannel
-      shell: cd "{{ go_path }}/src/flannel" && CGO_ENABLED=1 make dist/flanneld
-
     - name: Copy flannel config files on nodes
       copy: src=../files/{{ item }} dest=/tmp/{{ item }} state=directory mode=0777 owner={{ ansible_user }}
       with_items: 
@@ -90,5 +69,5 @@
       - "kube-flannel.yml"
 
     - name: Configure flannel
-      shell: kubectl apply -f '/tmp/kube-flannel-rbac.yml' -f '/tmp/kube-flannel.yml'
+      shell: "{{ usr_local_bin }}/kubectl apply -f /tmp/kube-flannel-rbac.yml -f /tmp/kube-flannel.yml"
 

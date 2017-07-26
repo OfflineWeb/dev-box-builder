@@ -29,6 +29,8 @@
 - name: Install docker
   sudo: True
   hosts: remote
+  vars_files:
+    - ../common/vars.yml
   vars:
     os_release: "{{ ansible_distribution_release }}"
 
@@ -58,5 +60,11 @@
       user: name={{ ansible_user }} groups=docker append=yes
       register: user_group
 
-    - debug: var=user_group
+    #- debug: var=user_group
+
+    - name: Install docker-compose
+      shell: curl -o {{ usr_local_bin }}/docker-compose -L "https://github.com/docker/compose/releases/download/1.11.2/docker-compose-$(uname -s)-$(uname -m)"
+
+    - name: Update user permission
+      shell: chmod +x {{ usr_local_bin }}/docker-compose
 
