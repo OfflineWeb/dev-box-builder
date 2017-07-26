@@ -49,7 +49,7 @@
       apt: update_cache=yes
 
     - name: Install kubelet and kubeadm
-      apt: name={{ item }} update_cache=yes
+      apt: name={{ item }} update_cache=yes allow_unauthenticated=yes
       with_items: 
       - "kubelet"
       - "kubeadm"
