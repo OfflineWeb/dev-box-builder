@@ -33,7 +33,7 @@
 - usr_local: '/usr/local'
 - usr_local_bin: '/usr/local/bin'
 - user_local_lib: '/usr/local/lib'
-- go_path: '/usr/local/go/'
+- go_path: '/usr/local/go'
 
 # etcd related
 - etcd_ver: v3.2.1

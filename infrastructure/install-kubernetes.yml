@@ -45,12 +45,14 @@
       register: kub_dir_exists
 
     - name: Download kubernetes
-      git: repo='https://github.com/kubernetes/kubernetes' dest="{{ dev_dir }}" clone=no update=yes
+      shell: "GOPATH={{ go_path }}/src {{ go_path }}/bin/go get -d k8s.io/kubernetes"
+      #git: repo='https://github.com/kubernetes/kubernetes' dest="{{ dev_dir }}" clone=no update=yes
       #when: kub_dir_exists.stat.isdir is not defined or kub_dir_exists.stat.isdir == False
 
     - name: Install kubernetes
-      shell: cd "{{ dev_dir }}/kubernetes" && rm -rf .make/ \
-              && make clean && make quick-release > {{ dev_dir }}/kubernetes-install.log
+      shell: cd {{ go_path }}/src/k8s.io/kubernetes && make > {{ dev_dir }}/kubernetes-install.log 2>&1
+      #shell: cd "{{ dev_dir }}/kubernetes" && rm -rf .make/ \
+      #        && make clean && make quick-release > {{ dev_dir }}/kubernetes-install.log
 
     - name: Install kubectl 
       shell:  "curl -LO https://storage.googleapis.com/kubernetes-release/release/\
