@@ -43,7 +43,10 @@
       - "software-properties-common"
 
     - name: Add kubeadm repo 
-      apt_repository: repo="deb http://apt.kubernetes.io/ kubernetes-xenial {{ os_release }} stable"
+      apt_repository: repo="deb http://apt.kubernetes.io/ kubernetes-xenial main stable"
+
+    - name: Update apt
+      apt: update_cache=yes
 
     - name: Install kubelet and kubeadm
       apt: name={{ item }} update_cache=yes
