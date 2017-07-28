@@ -43,7 +43,7 @@
 
 # kubernetes related
 - kubernetes_url: 'https://github.com/kubernetes/kubernetes'
-- kube_token: offline.kubecluster
+- kube_token: 42143e.c44bc65fb288be3e
 
 # couchdb related
 - couchdb_url: 'https://github.com/apache/couchdb.git'

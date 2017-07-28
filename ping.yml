@@ -45,6 +45,8 @@
     #- debug: var={{ hostvars[ansible_hostname] }}
     - debug: var=HOST_VARS
 
+    - debug: msg={{ ansible_kernel }}
+
 
 
 

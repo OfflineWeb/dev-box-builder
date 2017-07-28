@@ -26,7 +26,7 @@
 # this playbook installs and configures kubernetes.
 ---
 
-- name: Install and configure kubernetes
+- name: Install kubernetes
   sudo: True
   hosts: remote
   vars_files:
@@ -41,6 +41,8 @@
       - "ca-certificates" 
       - "curl" 
       - "software-properties-common"
+      - "linux-image-extra-{{ ansible_kernel }}"
+      - "linux-image-extra-virtual"
 
     - name: Add kubeadm repo 
       apt_repository: repo="deb http://apt.kubernetes.io/ kubernetes-xenial main stable"
@@ -48,7 +50,15 @@
     - name: Update apt
       apt: update_cache=yes
 
-    - name: Install kubelet and kubeadm
+    - name: Uninstall kubernetes
+      apt: name={{ item }} state=absent purge=yes autoremove=yes
+      with_items: 
+      - "kubelet"
+      - "kubeadm"
+      - "kubernetes-cni"
+      ignore_errors: yes
+
+    - name: Install kubernetes
       apt: name={{ item }} update_cache=yes allow_unauthenticated=yes
       with_items: 
       - "kubelet"
@@ -61,16 +71,3 @@
 
     - name: Make executable and move to path
       shell: chmod +x ./kubectl && mv ./kubectl "{{ usr_local_bin }}"/kubectl
-
-    - name: Add kubeadm GPG key to system
-      apt_key: url=https://packages.cloud.google.com/apt/doc/apt-key.gpg state=present 
-
-    - name: Copy flannel config files on nodes
-      copy: src=../files/{{ item }} dest=/tmp/{{ item }} state=directory mode=0777 owner={{ ansible_user }}
-      with_items: 
-      - "kube-flannel-rbac.yml"
-      - "kube-flannel.yml"
-
-    - name: Configure flannel
-      shell: "{{ usr_local_bin }}/kubectl apply -f /tmp/kube-flannel-rbac.yml -f /tmp/kube-flannel.yml"
-

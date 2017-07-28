@@ -1,0 +1,244 @@
+dev1 | SUCCESS => {
+    "hostvars": {
+        "dev1": {
+            "ansible_check_mode": false, 
+            "ansible_connection": "ssh", 
+            "ansible_host": "192.168.0.4", 
+            "ansible_playbook_python": "/usr/local/Cellar/ansible/2.3.1.0/libexec/bin/python2.7", 
+            "ansible_version": {
+                "full": "2.3.1.0", 
+                "major": 2, 
+                "minor": 3, 
+                "revision": 1, 
+                "string": "2.3.1.0"
+            }, 
+            "group_names": [
+                "kube-master", 
+                "remote"
+            ], 
+            "groups": {
+                "all": [
+                    "dev3", 
+                    "dev1", 
+                    "dev2"
+                ], 
+                "kube-master": [
+                    "dev1"
+                ], 
+                "remote": [
+                    "dev1", 
+                    "dev2"
+                ], 
+                "ungrouped": [
+                    "dev3"
+                ]
+            }, 
+            "inventory_dir": "/Users/papa/spaces/workspace/OfflineWeb/dev-box-builder", 
+            "inventory_file": "/Users/papa/spaces/workspace/OfflineWeb/dev-box-builder/hosts", 
+            "inventory_hostname": "dev1", 
+            "inventory_hostname_short": "dev1", 
+            "omit": "__omit_place_holder__e71710c1eee4457043a375ce9fcad02a5bf496a3", 
+            "playbook_dir": "."
+        }, 
+        "dev2": {
+            "ansible_check_mode": false, 
+            "ansible_connection": "ssh", 
+            "ansible_host": "192.168.0.9", 
+            "ansible_playbook_python": "/usr/local/Cellar/ansible/2.3.1.0/libexec/bin/python2.7", 
+            "ansible_version": {
+                "full": "2.3.1.0", 
+                "major": 2, 
+                "minor": 3, 
+                "revision": 1, 
+                "string": "2.3.1.0"
+            }, 
+            "group_names": [
+                "remote"
+            ], 
+            "groups": {
+                "all": [
+                    "dev3", 
+                    "dev1", 
+                    "dev2"
+                ], 
+                "kube-master": [
+                    "dev1"
+                ], 
+                "remote": [
+                    "dev1", 
+                    "dev2"
+                ], 
+                "ungrouped": [
+                    "dev3"
+                ]
+            }, 
+            "inventory_dir": "/Users/papa/spaces/workspace/OfflineWeb/dev-box-builder", 
+            "inventory_file": "/Users/papa/spaces/workspace/OfflineWeb/dev-box-builder/hosts", 
+            "inventory_hostname": "dev2", 
+            "inventory_hostname_short": "dev2", 
+            "omit": "__omit_place_holder__e71710c1eee4457043a375ce9fcad02a5bf496a3", 
+            "playbook_dir": "."
+        }, 
+        "dev3": {
+            "ansible_check_mode": false, 
+            "ansible_connection": "ssh", 
+            "ansible_host": "192.168.0.6", 
+            "ansible_playbook_python": "/usr/local/Cellar/ansible/2.3.1.0/libexec/bin/python2.7", 
+            "ansible_version": {
+                "full": "2.3.1.0", 
+                "major": 2, 
+                "minor": 3, 
+                "revision": 1, 
+                "string": "2.3.1.0"
+            }, 
+            "group_names": [
+                "ungrouped"
+            ], 
+            "groups": {
+                "all": [
+                    "dev3", 
+                    "dev1", 
+                    "dev2"
+                ], 
+                "kube-master": [
+                    "dev1"
+                ], 
+                "remote": [
+                    "dev1", 
+                    "dev2"
+                ], 
+                "ungrouped": [
+                    "dev3"
+                ]
+            }, 
+            "inventory_dir": "/Users/papa/spaces/workspace/OfflineWeb/dev-box-builder", 
+            "inventory_file": "/Users/papa/spaces/workspace/OfflineWeb/dev-box-builder/hosts", 
+            "inventory_hostname": "dev3", 
+            "inventory_hostname_short": "dev3", 
+            "omit": "__omit_place_holder__e71710c1eee4457043a375ce9fcad02a5bf496a3", 
+            "playbook_dir": "."
+        }
+    }
+}
+dev2 | SUCCESS => {
+    "hostvars": {
+        "dev1": {
+            "ansible_check_mode": false, 
+            "ansible_connection": "ssh", 
+            "ansible_host": "192.168.0.4", 
+            "ansible_playbook_python": "/usr/local/Cellar/ansible/2.3.1.0/libexec/bin/python2.7", 
+            "ansible_version": {
+                "full": "2.3.1.0", 
+                "major": 2, 
+                "minor": 3, 
+                "revision": 1, 
+                "string": "2.3.1.0"
+            }, 
+            "group_names": [
+                "kube-master", 
+                "remote"
+            ], 
+            "groups": {
+                "all": [
+                    "dev3", 
+                    "dev1", 
+                    "dev2"
+                ], 
+                "kube-master": [
+                    "dev1"
+                ], 
+                "remote": [
+                    "dev1", 
+                    "dev2"
+                ], 
+                "ungrouped": [
+                    "dev3"
+                ]
+            }, 
+            "inventory_dir": "/Users/papa/spaces/workspace/OfflineWeb/dev-box-builder", 
+            "inventory_file": "/Users/papa/spaces/workspace/OfflineWeb/dev-box-builder/hosts", 
+            "inventory_hostname": "dev1", 
+            "inventory_hostname_short": "dev1", 
+            "omit": "__omit_place_holder__e71710c1eee4457043a375ce9fcad02a5bf496a3", 
+            "playbook_dir": "."
+        }, 
+        "dev2": {
+            "ansible_check_mode": false, 
+            "ansible_connection": "ssh", 
+            "ansible_host": "192.168.0.9", 
+            "ansible_playbook_python": "/usr/local/Cellar/ansible/2.3.1.0/libexec/bin/python2.7", 
+            "ansible_version": {
+                "full": "2.3.1.0", 
+                "major": 2, 
+                "minor": 3, 
+                "revision": 1, 
+                "string": "2.3.1.0"
+            }, 
+            "group_names": [
+                "remote"
+            ], 
+            "groups": {
+                "all": [
+                    "dev3", 
+                    "dev1", 
+                    "dev2"
+                ], 
+                "kube-master": [
+                    "dev1"
+                ], 
+                "remote": [
+                    "dev1", 
+                    "dev2"
+                ], 
+                "ungrouped": [
+                    "dev3"
+                ]
+            }, 
+            "inventory_dir": "/Users/papa/spaces/workspace/OfflineWeb/dev-box-builder", 
+            "inventory_file": "/Users/papa/spaces/workspace/OfflineWeb/dev-box-builder/hosts", 
+            "inventory_hostname": "dev2", 
+            "inventory_hostname_short": "dev2", 
+            "omit": "__omit_place_holder__e71710c1eee4457043a375ce9fcad02a5bf496a3", 
+            "playbook_dir": "."
+        }, 
+        "dev3": {
+            "ansible_check_mode": false, 
+            "ansible_connection": "ssh", 
+            "ansible_host": "192.168.0.6", 
+            "ansible_playbook_python": "/usr/local/Cellar/ansible/2.3.1.0/libexec/bin/python2.7", 
+            "ansible_version": {
+                "full": "2.3.1.0", 
+                "major": 2, 
+                "minor": 3, 
+                "revision": 1, 
+                "string": "2.3.1.0"
+            }, 
+            "group_names": [
+                "ungrouped"
+            ], 
+            "groups": {
+                "all": [
+                    "dev3", 
+                    "dev1", 
+                    "dev2"
+                ], 
+                "kube-master": [
+                    "dev1"
+                ], 
+                "remote": [
+                    "dev1", 
+                    "dev2"
+                ], 
+                "ungrouped": [
+                    "dev3"
+                ]
+            }, 
+            "inventory_dir": "/Users/papa/spaces/workspace/OfflineWeb/dev-box-builder", 
+            "inventory_file": "/Users/papa/spaces/workspace/OfflineWeb/dev-box-builder/hosts", 
+            "inventory_hostname": "dev3", 
+            "inventory_hostname_short": "dev3", 
+            "omit": "__omit_place_holder__e71710c1eee4457043a375ce9fcad02a5bf496a3", 
+            "playbook_dir": "."
+        }
+    }
+}
