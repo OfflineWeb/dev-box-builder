@@ -25,23 +25,22 @@
 
 # this playbook configures kubernetes.
 ---
+- include: configure-etcd.yml
+
 - name: Configure kubernetes master
   sudo: True
   hosts: kube-master
   vars_files:
     - ../common/vars.yml
   vars:
+    me: "{{ ansible_user }}"
 
   tasks :
-
-    - name: Configure kubectl
-      shell: echo "source ({{ usr_local_bin }}/kubectl completion bash)" >> ~/.bashrc
-
     - name: Initialize kubeadm
       shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --token={{ kube_token }} --token-ttl=0 --skip-preflight-checks
       register: kube_master_init
 
-    - pause: minutes=5
+    - pause: minutes=1
     - debug: var=kube_master_init
 
     - name: Create kube config directory
@@ -50,6 +49,9 @@
     - name: Copy kubernetes config
       copy: src="/etc/kubernetes/admin.conf" dest="/home/{{ ansible_user }}/.kube/config" mode=0755 owner={{ ansible_user }} group={{ ansible_user }} remote_src=True
 
+    - name: Update bashrc
+      shell: echo "export KUBECONFIG=/home/{{ ansible_user }}/.kube/config" >> "/home/{{ ansible_user }}/.bashrc"
+
     - name: Copy flannel config files on nodes
       copy: src=../files/{{ item }} dest=/tmp/{{ item }} dest="/tmp/{{ item }}" mode=0777 owner={{ ansible_user }}
       with_items: 
@@ -57,38 +59,34 @@
       - "kube-flannel.yml"
 
     - name: Configure flannel
-      shell: "{{ usr_local_bin }}/kubectl apply -f /tmp/{{ item }} --validate=false --v=8"
+      shell: "{{ usr_local_bin }}/kubectl apply -f {{ item }} --validate=false --v=8"
       with_items:
-      - "kube-flannel-rbac.yml"
-      - "kube-flannel.yml"
-      #- "https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel-rbac.yml"
-      #- "https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml"
+      - "https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+      - "https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel-rbac.yml"
+      become: no
+      become_user: "papa"
+
+    - pause: minutes=1
+    
+    #- name: Allow scheduling pods on master
+    #  shell: "{{ usr_local_bin }}/kubectl taint nodes --all node-role.kubernetes.io/master-"
+    #  become: no
+    #  become_user: "papa"
 
 
 - name: Configure kubernetes nodes
   sudo: True
-  hosts: remote!kube-master
+  hosts: kube-minion
   vars_files:
     - ../common/vars.yml
   vars:
-    - kube_master_ip: hostvars[groups['kube-master'][0]]['ansible_host']
+    - kube_master_ip: "{{ hostvars[groups['kube-master'][0]]['ansible_host'] }}"
     - kube_port: 6443
 
   tasks:
+    - debug: var=kube_master_ip
     - name: Add node to kubernetes
       shell: kubeadm join --token {{ kube_token }} {{ kube_master_ip }}:{{ kube_port }} --skip-preflight-checks
-
-    - name: Create kube config directory
-      file: path="/home/{{ ansible_user }}/.kube" state=directory mode=0755 owner={{ ansible_user }} group={{ ansible_user }}
-
-    - name: Copy kubernetes config
-      copy: src="/etc/kubernetes/admin.conf" dest="/home/{{ ansible_user }}/.kube/config" mode=0755 owner={{ ansible_user }} group={{ ansible_user }}  remote_src=True
-
-    - name: Update bashrc
-      shell: echo "export KUBECONFIG=/home/{{ ansible_user }}/.kube/config" >> "/home/{{ ansible_user }}/.bashrc"
-
-    - name: Restart kubelet service
-      shell: systemctl restart kubelet
 
 - name: Verify nodes are added
   sudo: True
@@ -98,15 +96,15 @@
   vars:
 
   tasks :
-    - pause: minutes=1
     
-    - name: Allow scheduling pods on master
-      shell: "{{ usr_local_bin }}/kubectl taint nodes --all node-role.kubernetes.io/master- "
-
     - name: Verify master is running 
       shell: "{{ usr_local_bin }}/kubectl get pods --all-namespaces"
+      become: no
+      become_user: "papa"
 
     - name: Verify nodes
       shell: "{{ usr_local_bin }}/kubectl get nodes"
+      become: no
+      become_user: "papa"
 
     

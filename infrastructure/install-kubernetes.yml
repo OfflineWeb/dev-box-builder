@@ -44,6 +44,9 @@
       - "linux-image-extra-{{ ansible_kernel }}"
       - "linux-image-extra-virtual"
 
+    - name: Add google cloud GPG key to system
+      apt_key: url=https://packages.cloud.google.com/apt/doc/apt-key.gpg state=present 
+
     - name: Add kubeadm repo 
       apt_repository: repo="deb http://apt.kubernetes.io/ kubernetes-xenial main stable"
 
@@ -71,3 +74,22 @@
 
     - name: Make executable and move to path
       shell: chmod +x ./kubectl && mv ./kubectl "{{ usr_local_bin }}"/kubectl
+
+- name: Configure kubernetes master
+  sudo: True
+  hosts: kube-master
+  vars_files:
+    - ../common/vars.yml
+  vars:
+
+  tasks :
+
+    - name: Configure kubectl
+      shell: echo "source ({{ usr_local_bin }}/kubectl completion bash)" >> ~/.bashrc
+
+#- name: Install kubernetes
+#  sudo: True
+#  hosts: remote
+#  tasks :
+#    - name: Reboot
+#      shell: reboot now

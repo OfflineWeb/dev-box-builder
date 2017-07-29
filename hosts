@@ -9,3 +9,6 @@ dev2
 
 [kube-master]
 dev1
+
+[kube-minion]
+dev2
