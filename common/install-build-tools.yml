@@ -84,6 +84,6 @@
     - name: Update PATH variable
       shell: echo "export PATH=$PATH:{{ go_path }}/bin" >> /home/{{ ansible_user }}/.bash_profile
       shell: echo "export PATH=$PATH:{{ go_path }}/bin" >> /home/{{ ansible_user }}/.bashrc
-
+      shell: echo "export
 
     

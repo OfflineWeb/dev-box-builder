@@ -59,14 +59,17 @@ echo "etcd cluster : $cluster"
 listen="http://$infra_ip:2379,http://127.0.0.1:2379"
 
 # start the cluster
-$ETCD_PATH/etcd --name "$infra_name" \
+"$ETCD_PATH/etcd" --name "$infra_name" \
 --initial-advertise-peer-urls "http://$infra_ip:2380" \
 --listen-peer-urls "http://$infra_ip:2380" \
 --listen-client-urls "$listen" \
 --advertise-client-urls "http://$infra_ip:2379" \
 --initial-cluster-token "$cluster_token" \
 --initial-cluster "$cluster" \
---initial-cluster-state new
+--initial-cluster-state new \
+--snapshot-count=1000 \
+--heartbeat-interval=500 \
+--election-timeout=1500
 
 echo ""
 echo "*********** RUN etcd Cluster : Finish ************"
