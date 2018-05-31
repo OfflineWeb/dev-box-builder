@@ -43,6 +43,9 @@
     - pause: minutes=1
     - debug: var=kube_master_init
 
+    - name: Delete kube config directory
+      shell: rm -rf /home/{{ ansible_user }}/.kube
+
     - name: Create kube config directory
       file: path="/home/{{ ansible_user }}/.kube" state=directory mode=0755 owner={{ ansible_user }} group={{ ansible_user }}
 
@@ -68,10 +71,10 @@
 
     - pause: minutes=1
     
-    #- name: Allow scheduling pods on master
-    #  shell: "{{ usr_local_bin }}/kubectl taint nodes --all node-role.kubernetes.io/master-"
-    #  become: no
-    #  become_user: "papa"
+    - name: Allow scheduling pods on master
+      shell: "{{ usr_local_bin }}/kubectl taint nodes --all"
+      become: no
+      become_user: "papa"
 
 
 - name: Configure kubernetes nodes
@@ -85,8 +88,22 @@
 
   tasks:
     - debug: var=kube_master_ip
+    
+    - name: Delete kube config directory
+      shell: rm -rf /home/{{ ansible_user }}/.kube
+
+    - name: Create kube config directory
+      file: path="/home/{{ ansible_user }}/.kube" state=directory mode=0755 owner={{ ansible_user }} group={{ ansible_user }}
+
+    - name: Copy kubernetes config
+      copy: src="/etc/kubernetes/admin.conf" dest="/home/{{ ansible_user }}/.kube/config" mode=0755 owner={{ ansible_user }} group={{ ansible_user }} remote_src=True
+
+    - name: Update bashrc
+      shell: echo "export KUBECONFIG=/home/{{ ansible_user }}/.kube/config" >> "/home/{{ ansible_user }}/.bashrc"
+
+
     - name: Add node to kubernetes
-      shell: kubeadm join --token {{ kube_token }} {{ kube_master_ip }}:{{ kube_port }} --skip-preflight-checks
+      shell: kubeadm join --token {{ kube_token }} {{ kube_master_ip }}:{{ kube_port }} --skip-preflight-checks &
 
 - name: Verify nodes are added
   sudo: True

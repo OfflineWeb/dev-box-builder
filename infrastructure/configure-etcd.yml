@@ -37,7 +37,7 @@
   tasks:
 
     - name: Kill etcd if running
-      shell: systemctl stop etcd || kill -9 $(pgrep etcd)
+      shell: systemctl stop etcd; kill -9 $(pgrep etcd)
       ignore_errors: yes
 
     - name: Copy etcd scripts

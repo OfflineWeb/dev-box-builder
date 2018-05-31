@@ -69,7 +69,7 @@ listen="http://$infra_ip:2379,http://127.0.0.1:2379"
 --initial-cluster-state new \
 --snapshot-count=1000 \
 --heartbeat-interval=500 \
---election-timeout=1500
+--election-timeout=2500
 
 echo ""
 echo "*********** RUN etcd Cluster : Finish ************"
